@@ -34,7 +34,6 @@ def btnClickFunction():
     #exit
 
     result = getInputBoxValue()
-    print(result)
 
     #DATE
     if result[0]:
@@ -77,7 +76,6 @@ def btnClickFunction():
     f.write("---\n\n")
     [f.write(line + '\n\n') for line in contentSplit]
     f.close()
-
     print(filename + " written to " + location)
 
     ##DO THE GITHUB STUFF HERE!!!!!!
