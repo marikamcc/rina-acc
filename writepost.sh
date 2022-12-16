@@ -8,7 +8,7 @@ result=`python pbv2.py`
 conda deactivate
 
 cd ~/Documents/babynet/rina/
-echo $result
+#echo $result
 git add posts/$result
 git commit -m "GUI post (automated)"
 git push
