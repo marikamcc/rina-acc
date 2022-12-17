@@ -25,5 +25,3 @@ Some things don't work well between my Pythons locally (ie, in-vs-out of a conda
 ## Ideas
 
 OMG I can include an ASSET box in my GUI that I can copy to the public/post-assets directory.  i'm a genius this is how I can upload media (at least from desktop)
-
-Next: Version of write-post I can write for script over SSH via iPhone
