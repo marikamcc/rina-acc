@@ -85,7 +85,7 @@ class PostingGUI:
 
         f = open(self.location + filename, "a")
         f.write("---\n")
-        f.write("title: " + title + "\n")
+        f.write("title: '" + title + "'\n")
         f.write('tags: \n')
         if tags:
             tagArray = [tag.strip() for tag in tags.split(',') ]
