@@ -29,6 +29,7 @@ class PostingGUI:
 
         self.dateInput=Entry(self.master, fg=accent, bg=primary, width=wd)
         self.dateInput.place(x=60, y=3)
+        self.dateInput.insert(0, datetime.now())
 
         self.fileInput=Entry(self.master, fg=accent, bg=primary, width=wd)
         self.fileInput.place(x=60, y=34)
