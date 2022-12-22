@@ -12,7 +12,6 @@ def uniquefilecheck(title, location):
         return False
 
 def main(location, lgInputString):
-    print(lgInputString)
 
     filenameU = str(uuid.uuid4())+".md"
     postDate = datetime.now()
@@ -22,7 +21,7 @@ def main(location, lgInputString):
     # Write .md frontmatter
     f.write("---\n")
     #front matter has to be there for my indexing, but they can be blank
-    f.write("title: \n")
+    f.write("title:" + lgInputString + "\n")
     f.write('tags: \n')
     f.write("date: '" + str(postDate) + "'\n")
     f.write("---\n\n")
