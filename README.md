@@ -6,6 +6,14 @@ Some things don't work well between my Pythons locally (ie, in-vs-out of a conda
 
 ## Included
 
+### db: accessories for databased version of providing blog content
+
+**add-gooey-post.py**: GUI that adds content to database
+
+**writetodb.sh**: Shell script that runs add-gooey-post in a conda env (because that is the way my Python install is set up).  Shouldn't have to do any other updates?
+
+### md: accessories for version of site that scrapes markdown files for content
+
 **genfd.py**: **GEN**erates **F**ilename and **D**ate
 
 **peanutbuttervibes.py**: GUI for creating posts (.md files) on local machine
@@ -18,10 +26,9 @@ Some things don't work well between my Pythons locally (ie, in-vs-out of a conda
 
 **mobile.sh**: Handles posting via iPhone (through the Shortcuts app -> run script over SSH).  Can NOT handle the GitHub part, but iPhone hardware is not something I have influence over 😇
 
-### In beta
+**autoupdate.sh**: commits and pushes any modified files to GitHub
 
-**almondbuttervibes.py**: Almond butter is like a fancier version of peanut butter.  Note for self: Tkinter doesn't support drag-and-drop from finder to get a file's path :(
 
-## Ideas
+## In beta
 
-OMG I can include an ASSET box in my GUI that I can copy to the public/post-assets directory.  i'm a genius this is how I can upload media (at least from desktop)
+**almondbuttervibes.py**: Almond butter is like a fancier version of peanut butter. 
