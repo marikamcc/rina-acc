@@ -11,6 +11,8 @@ import markdown
 import psycopg2
 import sys
 
+import db_vars
+
 
 class PostingGUI:
     def __init__(self, master):
@@ -51,14 +53,11 @@ class PostingGUI:
 
     def doTheStuff(self):
         ##print('1.) Connect to DB')
-        DB_NAME = "pydb"
-        DB_USER = "marika"
-        DB_PASS = "marika"
-        DB_HOST = "localhost"
-        DB_PORT = "5432"  
+
+        # print(db_vars.DB_NAME, db_vars.DB_USER, db_vars.DB_PASS, db_vars.DB_HOST, db_vars.DB_PORT)
 
         try:
-            conn = psycopg2.connect(database=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST, port=DB_PORT, connect_timeout=3)
+            conn = psycopg2.connect(database=db_vars.DB_NAME, user=db_vars.DB_USER, password=db_vars.DB_PASS, host=db_vars.DB_HOST, port=db_vars.DB_PORT, connect_timeout=3)
             print("Database connected successfully")
         except:
             print("Database not connected successfully")
@@ -136,6 +135,7 @@ def main():
     
 
 if __name__ == '__main__':
+    # print(db_vars.DB_NAME, db_vars.DB_USER, db_vars.DB_PASS, db_vars.DB_HOST, db_vars.DB_PORT)
     main()
     exit()
 

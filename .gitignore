@@ -1,3 +1,5 @@
 *~
 almondbutter*.py
 db/test/
+db_vars.py
+__pycache__/
