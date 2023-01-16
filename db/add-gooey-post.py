@@ -1,5 +1,4 @@
 # Adding a post to my database with my GUI
-# CURRENTLY DOES NOT WRITE ANYWHERE
 
 import tkinter as tk
 from tkinter import ttk
@@ -18,20 +17,20 @@ class PostingGUI:
     def __init__(self, master):
 
         primary = '#fff'
-        accent = "#000"
+        accent = "#065"
         wd = '20'   
 
         self.master = master
         self.frame = tk.Frame(self.master)
 
         self.master.geometry('270x295+900+40')
-        self.master.title('write html blog post')
+        self.master.title('write blog post')
 
-        Label(self.master, text='date: ', fg=accent).place(x=15, y=5)
+        # Label(self.master, text='date: ', fg=accent).place(x=15, y=5)
         Label(self.master, text='file: ', fg=accent).place(x=15, y=36)
         Label(self.master, text='title: ', fg=accent).place(x=15, y=67)
         Label(self.master, text='tags: ', fg=accent).place(x=15, y=98)
-        Label(self.master, text='body: ', fg=accent).place(x=15, y=130)
+        Label(self.master, text='body:\n(MD) ', fg=accent).place(x=15, y=130)
 
         # self.dateInput=Entry(self.master, fg=accent, bg=primary, width=wd)
         # self.dateInput.place(x=60, y=3)
@@ -114,6 +113,7 @@ class PostingGUI:
                     conn.rollback()
 
         # print('4.) Link post and tag in posttotag table')
+        ### NOTE TO SELF: This can be done more elegantly and included in above loop "for x in tagArray" with "RETURNING id" in the insert statement.
             for t in tagArray:
                 cursor.execute("SELECT id FROM tags WHERE name = (%s)", (t,))
                 pp = cursor.fetchall()
