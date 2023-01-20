@@ -65,7 +65,7 @@ class PostingGUI:
         # I like the enforcement of lowercase better here
         body = markdown.markdown(self.bodyInput.get("1.0",'end-1c'))
         url = self.fileInput.get().strip().replace(" ","-")
-        date = self.dateInput.get().strip()
+        date = str(self.dateInput.get()).strip()
 
 
         cursor = conn.cursor()
@@ -83,12 +83,12 @@ class PostingGUI:
             # else:
             #     print("file non-existent")
             
-            cursor.execute("INSERT INTO posts (title, tags, body, url, date) VALUES (%s, %s, %s, %s) RETURNING id;", (title, tags, body, url, date))
+            cursor.execute("INSERT INTO posts (title, tags, body, url, date) VALUES (%s, %s, %s, %s, %s) RETURNING id;", (title, tags, body, url, date))
             id_of_new_row = cursor.fetchone()[0]
 
         else:
             #print('url isnull')
-            cursor.execute("INSERT INTO posts (title, tags, body, date) VALUES (%s, %s, %s) RETURNING id;", (title, tags, body, date))
+            cursor.execute("INSERT INTO posts (title, tags, body, date) VALUES (%s, %s, %s, %s) RETURNING id;", (title, tags, body, date))
             id_of_new_row = cursor.fetchone()[0]
 
         # Commit the add of post to db
