@@ -1,8 +1,4 @@
-# Adding a post to my database with my GUI
-
-# OUTSTANDING ISSUES: 
-#   - MAKE URL THE SAME BETWEEN BOTH DB VERSIONS
-#   
+# Adding a post to my database with my GUI  
 
 import tkinter as tk
 from tkinter import * 
@@ -12,6 +8,7 @@ import uuid
 import markdown
 import psycopg2
 import sys
+import uuid
 
 import db_vars
 
@@ -53,7 +50,24 @@ class PostingGUI:
 
         self.submitButton = Button(self.master, text='write post', bg=accent, fg=accent,  command=self.btnClickFunction, activebackground=primary, activeforeground=accent, width='10').place(x=70, y=255)
 
-    def doTheStuff(self, connectionstring):
+    def getURL(self):
+        url = self.fileInput.get().strip().replace(" ","-")
+
+        if url:
+            c = conn.cursor()
+            c.execute("SELECT EXISTS ( SELECT * FROM posts WHERE url = (%s) )", (url,))
+            check = c.fetchall()
+            c.close()
+
+            if check[0][0]:
+                # print("file exists")
+                url += '-' + str(uuid.uuid4())
+        else:
+            url = str(uuid.uuid4())
+        
+        return url
+
+    def doTheStuff(self, connectionstring, url):
 
         try:
             conn = psycopg2.connect(connectionstring, connect_timeout=3)
@@ -68,32 +82,35 @@ class PostingGUI:
         tags = self.tagsInput.get().lower()
         # I like the enforcement of lowercase better here
         body = markdown.markdown(self.bodyInput.get("1.0",'end-1c'))
-        url = self.fileInput.get().strip().replace(" ","-")
+        
         date = str(self.dateInput.get()).strip()
 
 
         cursor = conn.cursor()
 
         # print('2.) Add post to posts table')
-        if url:
-            c = conn.cursor()
-            c.execute("SELECT EXISTS ( SELECT * FROM posts WHERE url = (%s) )", (url,))
-            check = c.fetchall()
-            c.close()
+        # if url:
+        #     c = conn.cursor()
+        #     c.execute("SELECT EXISTS ( SELECT * FROM posts WHERE url = (%s) )", (url,))
+        #     check = c.fetchall()
+        #     c.close()
 
-            if check[0][0]:
-                # print("file exists")
-                url += '-' + str(uuid.uuid4())
-            # else:
-            #     print("file non-existent")
+        #     if check[0][0]:
+        #         # print("file exists")
+        #         url += '-' + str(uuid.uuid4())
+        #     # else:
+        #     #     print("file non-existent")
             
-            cursor.execute("INSERT INTO posts (title, tags, body, url, date) VALUES (%s, %s, %s, %s, %s) RETURNING id;", (title, tags, body, url, date))
-            id_of_new_row = cursor.fetchone()[0]
+        #     cursor.execute("INSERT INTO posts (title, tags, body, url, date) VALUES (%s, %s, %s, %s, %s) RETURNING id;", (title, tags, body, url, date))
+        #     id_of_new_row = cursor.fetchone()[0]
 
-        else:
-            #print('url isnull')
-            cursor.execute("INSERT INTO posts (title, tags, body, date) VALUES (%s, %s, %s, %s) RETURNING id;", (title, tags, body, date))
-            id_of_new_row = cursor.fetchone()[0]
+        # else:
+        #     #print('url isnull')
+        #     cursor.execute("INSERT INTO posts (title, tags, body, date) VALUES (%s, %s, %s, %s) RETURNING id;", (title, tags, body, date))
+        #     id_of_new_row = cursor.fetchone()[0]
+
+        cursor.execute("INSERT INTO posts (title, tags, body, url, date) VALUES (%s, %s, %s, %s, %s) RETURNING id;", (title, tags, body, url, date))
+        id_of_new_row = cursor.fetchone()[0]
 
         # Commit the add of post to db
         conn.commit()
@@ -127,8 +144,9 @@ class PostingGUI:
 
     def btnClickFunction(self):
         # Do this twice: First for the DB that the site reads from, and second for the local copy of the DB.
-        self.doTheStuff(db_vars.string2)
-        self.doTheStuff(db_vars.string3)
+        url = self.getURL()
+        self.doTheStuff(db_vars.string2, url)
+        self.doTheStuff(db_vars.string3, url)
         self.master.destroy()
 
 
