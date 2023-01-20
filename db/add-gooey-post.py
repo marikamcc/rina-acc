@@ -1,10 +1,9 @@
 # Adding a post to my database with my GUI
 
 import tkinter as tk
-from tkinter import ttk
 from tkinter import * 
-from datetime import datetime
-import os
+#from datetime import datetime
+#import os
 import uuid
 import markdown
 import psycopg2
@@ -26,6 +25,7 @@ class PostingGUI:
         self.master.geometry('270x295+900+40')
         self.master.title('write blog post')
 
+        # Does not allow for manual date thus far.
         # Label(self.master, text='date: ', fg=accent).place(x=15, y=5)
         Label(self.master, text='file: ', fg=accent).place(x=15, y=36)
         Label(self.master, text='title: ', fg=accent).place(x=15, y=67)
@@ -50,13 +50,10 @@ class PostingGUI:
 
         self.submitButton = Button(self.master, text='write post', bg=accent, fg=accent,  command=self.btnClickFunction, activebackground=primary, activeforeground=accent, width='10').place(x=70, y=255)
 
-    def doTheStuff(self):
-        ##print('1.) Connect to DB')
-
-        # print(db_vars.DB_NAME, db_vars.DB_USER, db_vars.DB_PASS, db_vars.DB_HOST, db_vars.DB_PORT)
+    def doTheStuff(self, connectionstring):
 
         try:
-            conn = psycopg2.connect(database=db_vars.DB_NAME, user=db_vars.DB_USER, password=db_vars.DB_PASS, host=db_vars.DB_HOST, port=db_vars.DB_PORT, connect_timeout=3)
+            conn = psycopg2.connect(connectionstring, connect_timeout=3)
             print("Database connected successfully")
         except:
             print("Database not connected successfully")
@@ -65,12 +62,13 @@ class PostingGUI:
         
         ## Collect the stuff
         title = self.titleInput.get()
-        tags = self.tagsInput.get()
+        tags = self.tagsInput.get().lower()
+        # I like the enforcement of lowercase better here
         body = markdown.markdown(self.bodyInput.get("1.0",'end-1c'))
         url = self.fileInput.get().strip().replace(" ","-")
 
-        cursor = conn.cursor()
 
+        cursor = conn.cursor()
 
         # print('2.) Add post to posts table')
         if url:
@@ -82,8 +80,8 @@ class PostingGUI:
             if check[0][0]:
                 # print("file exists")
                 url += '-' + str(uuid.uuid4())
-            else:
-                print("file non-existent")
+            # else:
+            #     print("file non-existent")
             
             cursor.execute("INSERT INTO posts (title, tags, body, url) VALUES (%s, %s, %s, %s) RETURNING id;", (title, tags, body, url))
             id_of_new_row = cursor.fetchone()[0]
@@ -109,7 +107,7 @@ class PostingGUI:
                         tagcur.execute("INSERT INTO tags (name) VALUES (%s)", (x,))
                         conn.commit()
                 except:
-                    print(x, "already in tag table")
+                    # print(x, "already in tag table")
                     conn.rollback()
 
         # print('4.) Link post and tag in posttotag table')
@@ -124,7 +122,9 @@ class PostingGUI:
         conn.close()
 
     def btnClickFunction(self):
-        self.doTheStuff()
+        # Do this twice: First for the DB that the site reads from, and second for the local copy of the DB.
+        self.doTheStuff(db_vars.string2)
+        self.doTheStuff(db_vars.string3)
         self.master.destroy()
 
 
@@ -135,7 +135,6 @@ def main():
     
 
 if __name__ == '__main__':
-    # print(db_vars.DB_NAME, db_vars.DB_USER, db_vars.DB_PASS, db_vars.DB_HOST, db_vars.DB_PORT)
     main()
     exit()
 
