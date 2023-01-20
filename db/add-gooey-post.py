@@ -1,5 +1,9 @@
 # Adding a post to my database with my GUI
 
+# OUTSTANDING ISSUES: 
+#   - MAKE URL THE SAME BETWEEN BOTH DB VERSIONS
+#   
+
 import tkinter as tk
 from tkinter import * 
 from datetime import datetime
