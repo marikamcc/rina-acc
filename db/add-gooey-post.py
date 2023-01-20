@@ -2,7 +2,7 @@
 
 import tkinter as tk
 from tkinter import * 
-#from datetime import datetime
+from datetime import datetime
 #import os
 import uuid
 import markdown
@@ -25,16 +25,15 @@ class PostingGUI:
         self.master.geometry('270x295+900+40')
         self.master.title('write blog post')
 
-        # Does not allow for manual date thus far.
-        # Label(self.master, text='date: ', fg=accent).place(x=15, y=5)
+        Label(self.master, text='date: ', fg=accent).place(x=15, y=5)
         Label(self.master, text='file: ', fg=accent).place(x=15, y=36)
         Label(self.master, text='title: ', fg=accent).place(x=15, y=67)
         Label(self.master, text='tags: ', fg=accent).place(x=15, y=98)
         Label(self.master, text='body:\n(MD) ', fg=accent).place(x=15, y=130)
 
-        # self.dateInput=Entry(self.master, fg=accent, bg=primary, width=wd)
-        # self.dateInput.place(x=60, y=3)
-        # self.dateInput.insert(0, datetime.now())
+        self.dateInput=Entry(self.master, fg=accent, bg=primary, width=wd)
+        self.dateInput.place(x=60, y=3)
+        self.dateInput.insert(0, datetime.now())
 
         self.fileInput=Entry(self.master, fg=accent, bg=primary, width=wd)
         self.fileInput.place(x=60, y=34)
@@ -66,6 +65,7 @@ class PostingGUI:
         # I like the enforcement of lowercase better here
         body = markdown.markdown(self.bodyInput.get("1.0",'end-1c'))
         url = self.fileInput.get().strip().replace(" ","-")
+        date = self.dateInput.get().strip()
 
 
         cursor = conn.cursor()
@@ -83,12 +83,12 @@ class PostingGUI:
             # else:
             #     print("file non-existent")
             
-            cursor.execute("INSERT INTO posts (title, tags, body, url) VALUES (%s, %s, %s, %s) RETURNING id;", (title, tags, body, url))
+            cursor.execute("INSERT INTO posts (title, tags, body, url, date) VALUES (%s, %s, %s, %s) RETURNING id;", (title, tags, body, url, date))
             id_of_new_row = cursor.fetchone()[0]
 
         else:
             #print('url isnull')
-            cursor.execute("INSERT INTO posts (title, tags, body) VALUES (%s, %s, %s) RETURNING id;", (title, tags, body))
+            cursor.execute("INSERT INTO posts (title, tags, body, date) VALUES (%s, %s, %s) RETURNING id;", (title, tags, body, date))
             id_of_new_row = cursor.fetchone()[0]
 
         # Commit the add of post to db
