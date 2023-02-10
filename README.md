@@ -12,6 +12,10 @@ Some things don't work well between my Pythons locally (ie, in-vs-out of a conda
 
 **writetodb.sh**: Shell script that runs `add-gooey-post` in a conda env (because that is the way my Python install is set up).  Shouldn't have to do any other updates?
 
+**updatelocal.py**: Uses my generic text box to to match my local db (PC) to prod for when I send in mobile posts
+
+**localketchup.sh**: Script to run `updatelocal` (it makes it catch up!)
+
 ### md: accessories for version of site that scrapes markdown files for content
 
 **genfd.py**: **GEN**erates **F**ilename and **D**ate

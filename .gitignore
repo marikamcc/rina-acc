@@ -3,3 +3,4 @@ almondbutter*.py
 db/test/
 db_vars.py
 __pycache__/
+gtb*

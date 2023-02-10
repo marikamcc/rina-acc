@@ -27,10 +27,13 @@ class PostingGUI:
         self.master.title('write blog post')
 
         Label(self.master, text='date: ', fg=accent).place(x=15, y=5)
-        Label(self.master, text='file: ', fg=accent).place(x=15, y=36)
-        Label(self.master, text='title: ', fg=accent).place(x=15, y=67)
-        Label(self.master, text='tags: ', fg=accent).place(x=15, y=98)
-        Label(self.master, text='body:\n(MD) ', fg=accent).place(x=15, y=130)
+        Label(self.master, text='url: ', fg=accent).place(x=15, y=36)
+        Label(self.master, text='TITLE: ', fg=accent).place(x=15, y=67)
+        #Label(self.master, text='tags: ', fg=accent).place(x=15, y=98)
+        #Label(self.master, text='BODY:\n(MD) ', fg=accent).place(x=15, y=130)
+
+        Label(self.master, text='tags: ', fg=accent).place(x=15, y=220)
+        Label(self.master, text='BODY:\n(MD) ', fg=accent).place(x=15, y=98)
 
         self.dateInput=Entry(self.master, fg=accent, bg=primary, width=wd)
         self.dateInput.place(x=60, y=3)
@@ -43,21 +46,25 @@ class PostingGUI:
         self.titleInput.place(x=60, y=65)
 
         self.tagsInput = Entry(self.master, fg=accent, bg=primary, width=wd)
-        self.tagsInput.place(x=60, y=96)
+        self.tagsInput.place(x=60, y=220)#y=96)
 
         self.bodyInput = Text(self.master, fg=accent, bg=primary, width=26, height=9, highlightcolor='#47aae0')
-        self.bodyInput.place(x=60, y=127)
+        self.bodyInput.place(x=60, y=96) #y=127)
 
         self.submitButton = Button(self.master, text='write post', bg=accent, fg=accent,  command=self.btnClickFunction, activebackground=primary, activeforeground=accent, width='10').place(x=70, y=255)
 
-    def getURL(self):
+    def getURL(self, connectionstring):
         url = self.fileInput.get().strip().replace(" ","-")
 
         if url:
+            # I don't like the way this is done seperately for both db's >:(
+            # Try: for string in [string1, string2] ?
+            conn = psycopg2.connect(connectionstring, connect_timeout=3)
             c = conn.cursor()
             c.execute("SELECT EXISTS ( SELECT * FROM posts WHERE url = (%s) )", (url,))
             check = c.fetchall()
             c.close()
+            conn.close()
 
             if check[0][0]:
                 # print("file exists")
@@ -144,7 +151,7 @@ class PostingGUI:
 
     def btnClickFunction(self):
         # Do this twice: First for the DB that the site reads from, and second for the local copy of the DB.
-        url = self.getURL()
+        url = self.getURL(db_vars.string2) # For string in [string1, string2]??
         self.doTheStuff(db_vars.string2, url)
         self.doTheStuff(db_vars.string3, url)
         self.master.destroy()
