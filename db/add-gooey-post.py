@@ -35,20 +35,20 @@ class PostingGUI:
         Label(self.master, text='tags: ', fg=accent).place(x=15, y=220)
         Label(self.master, text='BODY:\n(MD) ', fg=accent).place(x=15, y=98)
 
-        self.dateInput=Entry(self.master, fg=accent, bg=primary, width=wd)
+        self.dateInput=Entry(self.master, fg=accent, bg=primary, width=wd, insertbackground=accent)
         self.dateInput.place(x=60, y=3)
         self.dateInput.insert(0, datetime.now())
 
-        self.fileInput=Entry(self.master, fg=accent, bg=primary, width=wd)
+        self.fileInput=Entry(self.master, fg=accent, bg=primary, width=wd, insertbackground=accent)
         self.fileInput.place(x=60, y=34)
 
-        self.titleInput=Entry(self.master, fg=accent, bg=primary, width=wd)
+        self.titleInput=Entry(self.master, fg=accent, bg=primary, width=wd, insertbackground=accent)
         self.titleInput.place(x=60, y=65)
 
-        self.tagsInput = Entry(self.master, fg=accent, bg=primary, width=wd)
+        self.tagsInput = Entry(self.master, fg=accent, bg=primary, width=wd, insertbackground=accent)
         self.tagsInput.place(x=60, y=220)#y=96)
 
-        self.bodyInput = Text(self.master, fg=accent, bg=primary, width=26, height=9, highlightcolor='#47aae0')
+        self.bodyInput = Text(self.master, fg=accent, bg=primary, width=26, height=9, highlightcolor='#47aae0', insertbackground=accent)
         self.bodyInput.place(x=60, y=96) #y=127)
 
         self.submitButton = Button(self.master, text='write post', bg=accent, fg=accent,  command=self.btnClickFunction, activebackground=primary, activeforeground=accent, width='10').place(x=70, y=255)
