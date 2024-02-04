@@ -8,12 +8,13 @@ import uuid
 import markdown
 import psycopg2
 import sys
-import uuid
 
 import db_vars
 
 
 class PostingGUI:
+
+    # define gui features
     def __init__(self, master):
 
         primary = '#fff'
@@ -53,12 +54,13 @@ class PostingGUI:
 
         self.submitButton = Button(self.master, text='write post', bg=accent, fg=accent,  command=self.btnClickFunction, activebackground=primary, activeforeground=accent, width='10').place(x=70, y=255)
 
+
+    # Included in button click, but required to enforce the same URL for db and local backup db
     def getURL(self, connectionstring):
         url = self.fileInput.get().strip().replace(" ","-")
 
         if url:
-            # I don't like the way this is done seperately for both db's >:(
-            # Try: for string in [string1, string2] ?
+            # Does the url already exist in the table?
             conn = psycopg2.connect(connectionstring, connect_timeout=3)
             c = conn.cursor()
             c.execute("SELECT EXISTS ( SELECT * FROM posts WHERE url = (%s) )", (url,))
@@ -70,12 +72,15 @@ class PostingGUI:
                 # print("file exists")
                 url += '-' + str(uuid.uuid4())
         else:
+            # Should probably do another check here, but really what are the chances (?)
             url = str(uuid.uuid4())
         
         return url
 
+    # This is the bulk of the button click function
     def doTheStuff(self, connectionstring, url):
 
+        # print('1.) Connect to db')
         try:
             conn = psycopg2.connect(connectionstring, connect_timeout=3)
             print("Database connected successfully")
@@ -92,30 +97,10 @@ class PostingGUI:
         
         date = str(self.dateInput.get()).strip()
 
-
+        # Open cursor for db ops
         cursor = conn.cursor()
 
         # print('2.) Add post to posts table')
-        # if url:
-        #     c = conn.cursor()
-        #     c.execute("SELECT EXISTS ( SELECT * FROM posts WHERE url = (%s) )", (url,))
-        #     check = c.fetchall()
-        #     c.close()
-
-        #     if check[0][0]:
-        #         # print("file exists")
-        #         url += '-' + str(uuid.uuid4())
-        #     # else:
-        #     #     print("file non-existent")
-            
-        #     cursor.execute("INSERT INTO posts (title, tags, body, url, date) VALUES (%s, %s, %s, %s, %s) RETURNING id;", (title, tags, body, url, date))
-        #     id_of_new_row = cursor.fetchone()[0]
-
-        # else:
-        #     #print('url isnull')
-        #     cursor.execute("INSERT INTO posts (title, tags, body, date) VALUES (%s, %s, %s, %s) RETURNING id;", (title, tags, body, date))
-        #     id_of_new_row = cursor.fetchone()[0]
-
         cursor.execute("INSERT INTO posts (title, tags, body, url, date) VALUES (%s, %s, %s, %s, %s) RETURNING id;", (title, tags, body, url, date))
         id_of_new_row = cursor.fetchone()[0]
 
@@ -128,8 +113,7 @@ class PostingGUI:
             # print(tagArray)
 
             for x in tagArray:
-                # print(repr((x,)))
-                #print((x,))
+                # try to add the tags to the tag table.  should throw an error if already exists (unique constraint) and if so, undo the execute in exception.
                 try:
                     with conn.cursor() as tagcur:
                         tagcur.execute("INSERT INTO tags (name) VALUES (%s)", (x,))
@@ -139,7 +123,7 @@ class PostingGUI:
                     conn.rollback()
 
         # print('4.) Link post and tag in posttotag table')
-        ### NOTE TO SELF: This can be done more elegantly and included in above loop "for x in tagArray" with "RETURNING id" in the insert statement.
+        ### NOTE TO SELF: This can be done more elegantly and included in above loop "for x in tagArray" with "RETURNING id" in the insert statement... but also tagArray is like 1 maybe 2 tags sooo
             for t in tagArray:
                 cursor.execute("SELECT id FROM tags WHERE name = (%s)", (t,))
                 pp = cursor.fetchall()
@@ -151,9 +135,14 @@ class PostingGUI:
 
     def btnClickFunction(self):
         # Do this twice: First for the DB that the site reads from, and second for the local copy of the DB.
-        url = self.getURL(db_vars.string2) # For string in [string1, string2]??
+
+        # Check prod db for URL
+        url = self.getURL(db_vars.string2)
+
         self.doTheStuff(db_vars.string2, url)
         self.doTheStuff(db_vars.string3, url)
+
+        # And close window
         self.master.destroy()
 
 
